@@ -11,6 +11,8 @@ public class login extends JFrame implements ActionListener {
     JButton login, sign, clear;
     JTextField cardTextField;
     JPasswordField pinTextField;
+    int attempts = 0;
+
        public static String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -108,42 +110,55 @@ public class login extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void actionPerformed(ActionEvent ae) {
+public void actionPerformed(ActionEvent ae) {
 
-        if (ae.getSource() == clear) {
-            cardTextField.setText("");
-            pinTextField.setText("");
-        }
+    if (ae.getSource() == clear) {
+        cardTextField.setText("");
+        pinTextField.setText("");
+    }
 
-        else if (ae.getSource() == login) {
+    else if (ae.getSource() == login) {
 
-            conn conn=new conn();
-            String cardnu=cardTextField.getText();
-            String pinno=pinTextField.getText();
+        try {
+
+            conn conn = new conn();
+
+            String cardnu = cardTextField.getText();
+            String pinno = pinTextField.getText();
+
+            // Hash the entered PIN
             String hashedPin = hashPassword(pinno);
-            String query="select *from login where cardnumber = '"+cardnu+"' and pin = '"+hashedPin+"'";
-            try{
-                ResultSet rs = conn.s.executeQuery(query);
-                if(rs.next()){
-                    setVisible(false);
-                    new Transaction(pinno).setVisible(true);
-                }else{
-                    JOptionPane.showMessageDialog(null, "Incoreect card number and Pin");
-                }
-            }catch (Exception e)
-            {
-                System.out.println(e);
-            }
-        }
 
-        else if (ae.getSource() == sign) {
-            setVisible(false);
-            new SignupOne().setVisible(true);
+            // Secure query using PreparedStatement
+            PreparedStatement ps = conn.conn.prepareStatement(
+                    "SELECT * FROM login WHERE cardnumber = ? AND pin = ?");
+
+            ps.setString(1, cardnu);
+            ps.setString(2, hashedPin);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                attempts = 0;   // login successful -> reset attempts
+                setVisible(false);
+                new Transaction(pinno).setVisible(true);
+            } else {
+                attempts++;
+                if (attempts >= 3) {
+                    JOptionPane.showMessageDialog(null, "Account Locked due to 3 failed attempts");
+                    login.setEnabled(false);   // login button disable
+                } else {
+                    JOptionPane.showMessageDialog(null, "Incorrect card number and PIN\nAttempts left: " + (3 - attempts)); 
+                }
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) {
-        new login();
+    else if (ae.getSource() == sign) {
+        setVisible(false);
+        new SignupOne().setVisible(true);
     }
 }
-
