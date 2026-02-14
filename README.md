@@ -25,6 +25,8 @@ Modular and Maintainable Code Structure
 Java (Core Java)
 
 Java Swing (GUI)
+JDBC
+MySQL
 
 ## 🔐 Security Features
 
@@ -33,9 +35,5 @@ Java Swing (GUI)
 - Login attempt control
 - Secure authentication flow
 
-
-JDBC
-
-MySQL
 
 IDE: VS Code / IntelliJ IDEA / Eclipse
