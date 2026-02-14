@@ -28,6 +28,8 @@ Java Swing (GUI)
 JDBC
 MySQL
 
+IDE: VS Code / IntelliJ IDEA / Eclipse
+
 ## 🔐 Security Features
 
 - Password hashing using SHA-256
@@ -36,4 +38,6 @@ MySQL
 - Secure authentication flow
 
 
-IDE: VS Code / IntelliJ IDEA / Eclipse
+A secure version of this project is available in the `security-enhancement` branch. 
+Please switch to that branch to view implemented security features such as SHA-256 hashing, SQL injection protection, and login attempt limitation.
+
