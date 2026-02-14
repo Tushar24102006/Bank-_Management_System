@@ -4,12 +4,27 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.security.MessageDigest;
 
 public class login extends JFrame implements ActionListener {
 
     JButton login, sign, clear;
     JTextField cardTextField;
     JPasswordField pinTextField;
+       public static String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for(byte b : hash){
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     login() {
 
@@ -105,7 +120,8 @@ public class login extends JFrame implements ActionListener {
             conn conn=new conn();
             String cardnu=cardTextField.getText();
             String pinno=pinTextField.getText();
-            String query="select *from login where cardnumber = '"+cardnu+"' and pin = '"+pinno+"'";
+            String hashedPin = hashPassword(pinno);
+            String query="select *from login where cardnumber = '"+cardnu+"' and pin = '"+hashedPin+"'";
             try{
                 ResultSet rs = conn.s.executeQuery(query);
                 if(rs.next()){
@@ -130,3 +146,4 @@ public class login extends JFrame implements ActionListener {
         new login();
     }
 }
+
