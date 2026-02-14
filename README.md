@@ -26,6 +26,14 @@ Java (Core Java)
 
 Java Swing (GUI)
 
+## 🔐 Security Features
+
+- Password hashing using SHA-256
+- SQL Injection protection
+- Login attempt control
+- Secure authentication flow
+
+
 JDBC
 
 MySQL
