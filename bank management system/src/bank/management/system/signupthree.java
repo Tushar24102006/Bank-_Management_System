@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.security.MessageDigest;
+
 
 public class signupthree extends JFrame implements ActionListener {
 
@@ -11,6 +13,21 @@ public class signupthree extends JFrame implements ActionListener {
     JCheckBox c1, c2, c3, c4, c5, c6, c7;
     JButton submit, cancel;
     String formno;
+
+     public static String hashPassword(String password) {
+    try {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hash = md.digest(password.getBytes());
+        StringBuilder sb = new StringBuilder();
+        for(byte b : hash){
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    } catch(Exception e){
+        e.printStackTrace();
+    }
+    return null;
+}
 
     signupthree(String formno) {
 
@@ -173,6 +190,8 @@ add(carddet);
             Random ran = new Random();
             String cardNumber = "" + Math.abs((ran.nextLong() % 9000000000000000L) + 1000000000000000L);
             String pin = "" + Math.abs((ran.nextLong() % 9000L) + 1000L);
+            String hashedPin = hashPassword(pin);
+
 
             String facility = "";
 
@@ -195,8 +214,18 @@ add(carddet);
                 }else{
 
                 conn c = new conn();
-                String query = "insert into signupthree values('" + formno + "','" + accountType + "','" + cardNumber + "','" + pin + "','" + facility + "')";
-                String query2 = "insert into login values('" + formno + "','" + cardNumber + "','" + pin + "')";
+                    String query = "insert into signupthree values('"
+        + formno + "','"
+        + accountType + "','"
+        + cardNumber + "','"
+        + hashedPin + "','"
+        + facility + "')";
+                    String query2 = "insert into login values('"
+        + formno + "','"
+        + cardNumber + "','"
+        + hashedPin + "')";
+
+
 
                 c.s.executeUpdate(query);
                 c.s.executeUpdate(query2);
@@ -223,3 +252,4 @@ add(carddet);
         new signupthree("");
     }
 }
+
